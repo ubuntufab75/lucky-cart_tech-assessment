@@ -60,6 +60,13 @@ class EligibilityService {
     if (['gt', 'lt', 'gte', 'lte', 'in'].includes(condition)) {
       return this.checkConditionGtLtGteLteIn(condition, value, cart[criteriaKey]);
     }
+    if (condition === 'and') {
+      const that = this;
+      const conditionValueEntries = Object.entries(value);
+      return conditionValueEntries.every(function ([subCondition, subValue]) {
+        return that.checkConditionGtLtGteLteIn(subCondition, subValue, cart[criteriaKey]);
+      });
+    }
 
     return false;
   }
