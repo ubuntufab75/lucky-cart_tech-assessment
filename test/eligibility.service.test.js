@@ -94,6 +94,20 @@ describe('Eligibility', () => {
       const actualEligibility = eligibilityService.isEligible(cart, criteria);
       should(actualEligibility).be.false();
     });
+    it('should not be eligible when basic string condition is not fulfilled for a ISOString date (wrong value)', () => {
+      const cart = {date: "2023-11-06T00:00:00.000Z"};
+      const criteria = {date: "2023-10-04T23:59:59.000Z"};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.false();
+    });
+    it('should be eligible when basic string condition is fulfilled for a ISOString date', () => {
+      const cart = {date: "2023-11-06T00:00:00.000Z"};
+      const criteria = {date: "2023-11-06T00:00:00.000Z"};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.true();
+    });
   });
 
   describe('Gt condition', () => {
@@ -118,7 +132,29 @@ describe('Eligibility', () => {
       const actualEligibility = eligibilityService.isEligible(cart, criteria);
       should(actualEligibility).be.true();
     });
+    it('should not be eligible when gt condition is not fulfilled for a ISOString date', () => {
+      const cart = {date: "2023-10-04T23:59:59.000Z"};
+      const criteria = {date: {gt: "2023-11-06T00:00:00.000Z"}};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.false();
+    });
+    it('should not be eligible when gt condition is not fulfilled for a ISOString date (equal)', () => {
+      const cart = {date: "2023-11-06T00:00:00.000Z"};
+      const criteria = {date: {gt: "2023-11-06T00:00:00.000Z"}};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.false();
+    });
+    it('should be eligible when gt condition is fulfilled for a ISOString date', () => {
+      const cart = {date: "2023-11-06T00:00:00.000Z"};
+      const criteria = {date: {gt: "2023-10-04T23:59:59.000Z"}};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.true();
+    });
   });
+
   describe('Lt condition', () => {
     it('should not be eligible when lt condition is not fulfilled', () => {
       const cart = {total: 30};
@@ -137,6 +173,27 @@ describe('Eligibility', () => {
     it('should be eligible when lt condition is fulfilled', () => {
       const cart = {total: 10};
       const criteria = {total: {lt: 20}};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.true();
+    });
+    it('should not be eligible when lt condition is not fulfilled for a ISOString date', () => {
+      const cart = {date: "2023-11-06T00:00:00.000Z"};
+      const criteria = {date: {lt: "2023-10-04T23:59:59.000Z"}};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.false();
+    });
+    it('should not be eligible when lt condition is not fulfilled for a ISOString date (equal)', () => {
+      const cart = {date: "2023-11-06T00:00:00.000Z"};
+      const criteria = {date: {lt: "2023-11-06T00:00:00.000Z"}};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.false();
+    });
+    it('should be eligible when lt condition is fulfilled for a ISOString date', () => {
+      const cart = {date: "2023-10-04T23:59:59.000Z"};
+      const criteria = {date: {lt: "2023-11-06T00:00:00.000Z"}};
       const eligibilityService = new EligibilityService();
       const actualEligibility = eligibilityService.isEligible(cart, criteria);
       should(actualEligibility).be.true();
@@ -165,6 +222,27 @@ describe('Eligibility', () => {
       const actualEligibility = eligibilityService.isEligible(cart, criteria);
       should(actualEligibility).be.true();
     });
+    it('should not be eligible when gte condition is not fulfilled for a ISOString date', () => {
+      const cart = {date: "2023-10-04T23:59:59.000Z"};
+      const criteria = {date: {gte: "2023-11-06T00:00:00.000Z"}};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.false();
+    });
+    it('should be eligible when gte condition is fulfilled for a ISOString date (equal)', () => {
+      const cart = {date: "2023-11-06T00:00:00.000Z"};
+      const criteria = {date: {gte: "2023-11-06T00:00:00.000Z"}};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.true();
+    });
+    it('should be eligible when gte condition is fulfilled for a ISOString date', () => {
+      const cart = {date: "2023-11-06T00:00:00.000Z"};
+      const criteria = {date: {gte: "2023-10-04T23:59:59.000Z"}};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.true();
+    });
   });
 
   describe('Lte condition', () => {
@@ -185,6 +263,27 @@ describe('Eligibility', () => {
     it('should be eligible when lt condition is fulfilled', () => {
       const cart = {total: 10};
       const criteria = {total: {lte: 20}};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.true();
+    });
+    it('should not be eligible when lte condition is not fulfilled for a ISOString date', () => {
+      const cart = {date: "2023-11-06T00:00:00.000Z"};
+      const criteria = {date: {lte: "2023-10-04T23:59:59.000Z"}};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.false();
+    });
+    it('should be eligible when lte condition is fulfilled for a ISOString date (equal)', () => {
+      const cart = {date: "2023-11-06T00:00:00.000Z"};
+      const criteria = {date: {lte: "2023-11-06T00:00:00.000Z"}};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.true();
+    });
+    it('should be eligible when lte condition is fulfilled for a ISOString date', () => {
+      const cart = {date: "2023-10-04T23:59:59.000Z"};
+      const criteria = {date: {lte: "2023-11-06T00:00:00.000Z"}};
       const eligibilityService = new EligibilityService();
       const actualEligibility = eligibilityService.isEligible(cart, criteria);
       should(actualEligibility).be.true();
@@ -365,7 +464,7 @@ describe('Eligibility', () => {
   });
 
   describe('Complex cases', () => {
-    it('should be eligible with example values', () => {
+    it('should not be eligible with example values', () => {
       const cart = {
         "cartId": "cart-id",
         "shopperId": "shopper-id",
