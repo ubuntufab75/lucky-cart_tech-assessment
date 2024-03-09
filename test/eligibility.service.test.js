@@ -264,51 +264,100 @@ describe('Eligibility', () => {
       const actualEligibility = eligibilityService.isEligible(cart, criteria);
       should(actualEligibility).be.false();
     });
-    it('should not be eligible when sub object condition is not fulfilled (wrong value)', () => {
+    it('should not be eligible when sub object condition is not fulfilled with integer elements (wrong value)', () => {
       const cart = {products:{quantity:2}};
       const criteria = {'products.quantity': 1};
       const eligibilityService = new EligibilityService();
       const actualEligibility = eligibilityService.isEligible(cart, criteria);
       should(actualEligibility).be.false();
     });
-    it('should be eligible when sub object condition is fulfilled', () => {
+    it('should be eligible when sub object condition is fulfilled with integer elements', () => {
       const cart = {products:{quantity:1}};
       const criteria = {'products.quantity': 1};
       const eligibilityService = new EligibilityService();
       const actualEligibility = eligibilityService.isEligible(cart, criteria);
       should(actualEligibility).be.true();
     });
-    it('should not be eligible when array sub object condition is not fulfilled', () => {
+    it('should not be eligible when array sub object condition is not fulfilled with integer elements', () => {
       const cart = {products:[{quantity:2}]};
       const criteria = {'products.quantity': 1};
       const eligibilityService = new EligibilityService();
       const actualEligibility = eligibilityService.isEligible(cart, criteria);
       should(actualEligibility).be.false();
     });
-    it('should be eligible when array sub object condition is fulfilled', () => {
+    it('should be eligible when array sub object condition is fulfilled with integer elements', () => {
       const cart = {products:[{quantity:1}]};
       const criteria = {'products.quantity': 1};
       const eligibilityService = new EligibilityService();
       const actualEligibility = eligibilityService.isEligible(cart, criteria);
       should(actualEligibility).be.true();
     });
-    it('should be eligible when array sub object condition with two elements is fulfilled for first element', () => {
+    it('should be eligible when array sub object condition with two elements is fulfilled with integer elements for first cart element', () => {
       const cart = {products:[{quantity:1}, {quantity: 2}]};
       const criteria = {'products.quantity': 1};
       const eligibilityService = new EligibilityService();
       const actualEligibility = eligibilityService.isEligible(cart, criteria);
       should(actualEligibility).be.true();
     });
-    it('should be eligible when array sub object condition with two elements is fulfilled for second element', () => {
+    it('should be eligible when array sub object condition with two elements is fulfilled with integer elements for second cart element', () => {
       const cart = {products:[{quantity:1}, {quantity: 2}]};
       const criteria = {'products.quantity': 2};
       const eligibilityService = new EligibilityService();
       const actualEligibility = eligibilityService.isEligible(cart, criteria);
       should(actualEligibility).be.true();
     });
-    it('should be eligible when array sub object condition with two elements is not fulfilled', () => {
+    it('should not be eligible when array sub object condition with two elements is not fulfilled with integer elements', () => {
       const cart = {products:[{quantity:1}, {quantity: 2}]};
       const criteria = {'products.quantity': 3};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.false();
+    });
+    it('should not be eligible when sub object condition is not fulfilled with criteria string element (wrong value)', () => {
+      const cart = {products:{quantity:2}};
+      const criteria = {'products.quantity': '1'};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.false();
+    });
+    it('should be eligible when sub object condition is fulfilled with criteria string element', () => {
+      const cart = {products:{quantity:1}};
+      const criteria = {'products.quantity': '1'};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.true();
+    });
+    it('should not be eligible when array sub object condition is not fulfilled with criteria string element', () => {
+      const cart = {products:[{quantity:2}]};
+      const criteria = {'products.quantity': '1'};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.false();
+    });
+    it('should be eligible when array sub object condition is fulfilled with criteria string element', () => {
+      const cart = {products:[{quantity:1}]};
+      const criteria = {'products.quantity': '1'};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.true();
+    });
+    it('should be eligible when array sub object condition with two elements is fulfilled with criteria string element for first cart element', () => {
+      const cart = {products:[{quantity:1}, {quantity: 2}]};
+      const criteria = {'products.quantity': '1'};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.true();
+    });
+    it('should be eligible when array sub object condition with two elements is fulfilled with criteria string element for second cart element', () => {
+      const cart = {products:[{quantity:1}, {quantity: 2}]};
+      const criteria = {'products.quantity': '2'};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.true();
+    });
+    it('should not be eligible when array sub object condition with two elements is not fulfilled with criteria string element', () => {
+      const cart = {products:[{quantity:1}, {quantity: 2}]};
+      const criteria = {'products.quantity': '3'};
       const eligibilityService = new EligibilityService();
       const actualEligibility = eligibilityService.isEligible(cart, criteria);
       should(actualEligibility).be.false();
