@@ -48,7 +48,19 @@ class EligibilityService {
     // Retrieve the entries of criteria
     const criteriaEntries = Object.entries(criteria);
     const [criteriaKey, criteriaValue] = criteriaEntries[0];
-  
+
+    // Sub-Object condition
+    if (criteriaKey.indexOf('.') > -1) {
+      const [cartField, cartSubField] = criteriaKey.split('.');
+      if (!cart[cartField]) {
+        return false;
+      }
+      const cartFieldAsArray = Array.isArray(cart[cartField]) ? cart[cartField] : [cart[cartField]];
+      return cartFieldAsArray.some(function (cartFieldValue) {
+        return cartFieldValue[cartSubField] === criteriaValue;
+      });
+    }
+
     // Basic condition
     if (!(criteriaValue instanceof Object)) {
       return cart[criteriaKey] == criteriaValue;
