@@ -12,10 +12,19 @@ class EligibilityService {
       return true;
     }
 
-    // Check the entries of criteria
+    // Retrieve the entries of criteria
     const criteriaEntries = Object.entries(criteria);
     const [criteriaKey, criteriaValue] = criteriaEntries[0];
-    return cart[criteriaKey] == criteriaValue;
+  
+    // Basic condition
+    if (!(criteriaValue instanceof Object)) {
+      return cart[criteriaKey] == criteriaValue;
+    }
+
+    // Other conditions
+    const criteriaValueEntries = Object.entries(criteriaValue);
+    const [, value] = criteriaValueEntries[0];
+    return cart[criteriaKey] > value;
   }
 }
 
