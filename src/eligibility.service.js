@@ -67,6 +67,13 @@ class EligibilityService {
         return that.checkConditionGtLtGteLteIn(subCondition, subValue, cart[criteriaKey]);
       });
     }
+    if (condition === 'or') {
+      const that = this;
+      const conditionValueEntries = Object.entries(value);
+      return conditionValueEntries.some(function ([subCondition, subValue]) {
+        return that.checkConditionGtLtGteLteIn(subCondition, subValue, cart[criteriaKey]);
+      });
+    }
 
     return false;
   }
