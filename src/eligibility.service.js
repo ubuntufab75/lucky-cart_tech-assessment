@@ -27,7 +27,10 @@ class EligibilityService {
     if (condition === 'gt') {
       return cart[criteriaKey] > value;
     }
-    return cart[criteriaKey] < value;
+    if (condition === 'lt') {
+      return cart[criteriaKey] < value;
+    }
+    return cart[criteriaKey] >= value;
   }
 }
 
