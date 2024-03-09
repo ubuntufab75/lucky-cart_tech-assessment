@@ -56,8 +56,16 @@ class EligibilityService {
         return false;
       }
       const cartFieldAsArray = Array.isArray(cart[cartField]) ? cart[cartField] : [cart[cartField]];
+      if (!(criteriaValue instanceof Object)) {
+        return cartFieldAsArray.some(function (cartFieldValue) {
+          return cartFieldValue[cartSubField] == criteriaValue;
+        });
+      }
+      const criteriaValueEntries = Object.entries(criteriaValue);
+      const [condition, value] = criteriaValueEntries[0];
+      const that = this;
       return cartFieldAsArray.some(function (cartFieldValue) {
-        return cartFieldValue[cartSubField] == criteriaValue;
+        return that.checkConditionGtLtGteLteIn(condition, value, cartFieldValue[cartSubField]);
       });
     }
 
