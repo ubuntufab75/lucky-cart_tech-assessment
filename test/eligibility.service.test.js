@@ -461,6 +461,34 @@ describe('Eligibility', () => {
       const actualEligibility = eligibilityService.isEligible(cart, criteria);
       should(actualEligibility).be.false();
     });
+    it('should not be eligible when sub object condition is not fulfilled for a In condition', () => {
+      const cart = {products:{productId:"5449000051973"}};
+      const criteria = {'products.productId': { "in": ["5449000054227", "5449000056741"] }};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.false();
+    });
+    it('should be eligible when sub object condition is fulfilled for a In condition', () => {
+      const cart = {products:{productId:"5449000056741"}};
+      const criteria = {'products.productId': { "in": ["5449000054227", "5449000056741"] }};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.true();
+    });
+    it('should not be eligible when array sub object condition is not fulfilled for a In condition', () => {
+      const cart = {products:[{productId:"5449000051973"}]};
+      const criteria = {'products.productId': { "in": ["5449000054227", "5449000056741"] }};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.false();
+    });
+    it('should be eligible when array sub object condition is fulfilled for a In condition', () => {
+      const cart = {products:[{productId:"5449000054227"}]};
+      const criteria = {'products.productId': { "in": ["5449000054227", "5449000056741"] }};
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.true();
+    });
   });
 
   describe('Complex cases', () => {
