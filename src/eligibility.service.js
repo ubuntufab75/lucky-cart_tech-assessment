@@ -15,7 +15,7 @@ class EligibilityService {
     // Check the entries of criteria
     const criteriaEntries = Object.entries(criteria);
     const [criteriaKey, criteriaValue] = criteriaEntries[0];
-    return cart[criteriaKey] === criteriaValue;
+    return cart[criteriaKey] == criteriaValue;
   }
 }
 
