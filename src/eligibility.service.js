@@ -6,13 +6,15 @@ class EligibilityService {
    *  - gte
    *  - lte
    *  - in
+   *  - and
+   *  - or
    *
    * @param condition
    * @param value
    * @param cartFieldValue
    * @return {boolean}
    */
-  checkConditionGtLtGteLteIn(condition, value, cartFieldValue) {
+  checkConditionGtLtGteLteInAndOr(condition, value, cartFieldValue) {
     if (condition === 'gt') {
       return cartFieldValue > value;
     }
@@ -27,6 +29,20 @@ class EligibilityService {
     }
     if (condition === 'in') {
       return value.includes(cartFieldValue);
+    }
+    if (condition === 'and') {
+      const that = this;
+      const conditionValueEntries = Object.entries(value);
+      return conditionValueEntries.every(function ([subCondition, subValue]) {
+        return that.checkConditionGtLtGteLteInAndOr(subCondition, subValue, cartFieldValue);
+      });
+    }
+    if (condition === 'or') {
+      const that = this;
+      const conditionValueEntries = Object.entries(value);
+      return conditionValueEntries.some(function ([subCondition, subValue]) {
+        return that.checkConditionGtLtGteLteInAndOr(subCondition, subValue, cartFieldValue);
+      });
     }
 
     return false;
@@ -65,7 +81,7 @@ class EligibilityService {
       const [condition, value] = criteriaValueEntries[0];
       const that = this;
       return cartFieldAsArray.some(function (cartFieldValue) {
-        return that.checkConditionGtLtGteLteIn(condition, value, cartFieldValue[cartSubField]);
+        return that.checkConditionGtLtGteLteInAndOr(condition, value, cartFieldValue[cartSubField]);
       });
     }
 
@@ -77,25 +93,7 @@ class EligibilityService {
     // Other conditions
     const criteriaValueEntries = Object.entries(criteriaValue);
     const [condition, value] = criteriaValueEntries[0];
-    if (['gt', 'lt', 'gte', 'lte', 'in'].includes(condition)) {
-      return this.checkConditionGtLtGteLteIn(condition, value, cart[criteriaKey]);
-    }
-    if (condition === 'and') {
-      const that = this;
-      const conditionValueEntries = Object.entries(value);
-      return conditionValueEntries.every(function ([subCondition, subValue]) {
-        return that.checkConditionGtLtGteLteIn(subCondition, subValue, cart[criteriaKey]);
-      });
-    }
-    if (condition === 'or') {
-      const that = this;
-      const conditionValueEntries = Object.entries(value);
-      return conditionValueEntries.some(function ([subCondition, subValue]) {
-        return that.checkConditionGtLtGteLteIn(subCondition, subValue, cart[criteriaKey]);
-      });
-    }
-
-    return false;
+    return this.checkConditionGtLtGteLteInAndOr(condition, value, cart[criteriaKey]);
   }
 }
 
