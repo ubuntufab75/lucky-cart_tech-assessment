@@ -57,43 +57,44 @@ class EligibilityService {
    * @return {boolean}
    */
   isEligible(cart, criteria) {
-    if (Object.keys(criteria).length === 0) {
-      return true;
-    }
+    const that = this;
 
     // Retrieve the entries of criteria
     const criteriaEntries = Object.entries(criteria);
-    const [criteriaKey, criteriaValue] = criteriaEntries[0];
 
-    // Sub-Object condition
-    if (criteriaKey.indexOf('.') > -1) {
-      const [cartField, cartSubField] = criteriaKey.split('.');
-      if (!cart[cartField]) {
-        return false;
+    // Loop on the entries of criteria: all conditions must be fullfilled if cart is eligible
+    return criteriaEntries.every(function ([criteriaKey, criteriaValue]) {
+      // Sub-Object condition
+      if (criteriaKey.indexOf('.') > -1) {
+        const [cartField, cartSubField] = criteriaKey.split('.');
+        if (!cart[cartField]) {
+          return false;
+        }
+        const cartFieldAsArray = Array.isArray(cart[cartField]) ? cart[cartField] : [cart[cartField]];
+        if (!(criteriaValue instanceof Object)) {
+          return cartFieldAsArray.some(function (cartFieldValue) {
+            return cartFieldValue[cartSubField] == criteriaValue;
+          });
+        }
+        const criteriaValueEntries = Object.entries(criteriaValue);
+        return criteriaValueEntries.every(function ([condition, value]) {
+          return cartFieldAsArray.some(function (cartFieldValue) {
+            return that.checkConditionGtLtGteLteInAndOr(condition, value, cartFieldValue[cartSubField]);
+          });
+        })
       }
-      const cartFieldAsArray = Array.isArray(cart[cartField]) ? cart[cartField] : [cart[cartField]];
+
+      // Basic condition
       if (!(criteriaValue instanceof Object)) {
-        return cartFieldAsArray.some(function (cartFieldValue) {
-          return cartFieldValue[cartSubField] == criteriaValue;
-        });
+        return cart[criteriaKey] == criteriaValue;
       }
+
+      // Other conditions
       const criteriaValueEntries = Object.entries(criteriaValue);
-      const [condition, value] = criteriaValueEntries[0];
-      const that = this;
-      return cartFieldAsArray.some(function (cartFieldValue) {
-        return that.checkConditionGtLtGteLteInAndOr(condition, value, cartFieldValue[cartSubField]);
+      return criteriaValueEntries.every(function ([condition, value]) {
+        return that.checkConditionGtLtGteLteInAndOr(condition, value, cart[criteriaKey]);
       });
-    }
-
-    // Basic condition
-    if (!(criteriaValue instanceof Object)) {
-      return cart[criteriaKey] == criteriaValue;
-    }
-
-    // Other conditions
-    const criteriaValueEntries = Object.entries(criteriaValue);
-    const [condition, value] = criteriaValueEntries[0];
-    return this.checkConditionGtLtGteLteInAndOr(condition, value, cart[criteriaKey]);
+    });
   }
 }
 
