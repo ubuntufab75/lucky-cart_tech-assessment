@@ -57,7 +57,7 @@ class EligibilityService {
       }
       const cartFieldAsArray = Array.isArray(cart[cartField]) ? cart[cartField] : [cart[cartField]];
       return cartFieldAsArray.some(function (cartFieldValue) {
-        return cartFieldValue[cartSubField] === criteriaValue;
+        return cartFieldValue[cartSubField] == criteriaValue;
       });
     }
 
