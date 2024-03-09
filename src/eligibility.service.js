@@ -33,7 +33,14 @@ class EligibilityService {
     if (condition === 'gte') {
       return cart[criteriaKey] >= value;
     }
-    return cart[criteriaKey] <= value;
+    if (condition === 'lte') {
+      return cart[criteriaKey] <= value;
+    }
+    if (condition === 'in') {
+      return value.includes(cart[criteriaKey]);
+    }
+
+    return false;
   }
 }
 
