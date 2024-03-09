@@ -23,8 +23,11 @@ class EligibilityService {
 
     // Other conditions
     const criteriaValueEntries = Object.entries(criteriaValue);
-    const [, value] = criteriaValueEntries[0];
-    return cart[criteriaKey] > value;
+    const [condition, value] = criteriaValueEntries[0];
+    if (condition === 'gt') {
+      return cart[criteriaKey] > value;
+    }
+    return cart[criteriaKey] < value;
   }
 }
 
