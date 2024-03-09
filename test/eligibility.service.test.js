@@ -492,35 +492,37 @@ describe('Eligibility', () => {
   });
 
   describe('Complex cases', () => {
-    it('should not be eligible with example values', () => {
-      const cart = {
-        "cartId": "cart-id",
-        "shopperId": "shopper-id",
-        "date": "2021-10-06T18:35:42.000Z",
-        "totalAti": 99.80,
-        "promoCode": "voucher-42",
-        "products": [
-          {
-            "productId": "5449000054227",
-            "quantity": 20,
-            "unitPriceAti": 2.5,
-            "totalPriceAti": 50
-          },
-          {
-            "productId": "3099873045369",
-            "quantity": 2,
-            "unitPriceAti": 24.90,
-            "totalPriceAti": 49.80
-          }
-        ]
-      }
+    const cart = {
+      "cartId": "cart-id",
+      "shopperId": "shopper-id",
+      "date": "2021-10-06T18:35:42.000Z",
+      "totalAti": 99.80,
+      "promoCode": "voucher-42",
+      "products": [
+        {
+          "productId": "5449000054227",
+          "quantity": 20,
+          "unitPriceAti": 2.5,
+          "totalPriceAti": 50
+        },
+        {
+          "productId": "3099873045369",
+          "quantity": 2,
+          "unitPriceAti": 24.90,
+          "totalPriceAti": 49.80
+        }
+      ]
+    }
+    it('should not be eligible with criteria (wrong date)', () => {
       const criteria = {
         "shopperId": "shopper-id",
-        "totalAti": {
-          "gt": 50
-        },
+        "totalAti": "99.80",
         "products.productId": {
-          "in": ["5449000054227"]
+          "in": ["3099873045369", "5449000054227"]
+        },
+        "products.quantity": {
+          "gte": 20,
+          "lt": 30
         },
         "date": {
           "and": {
@@ -532,6 +534,116 @@ describe('Eligibility', () => {
       const eligibilityService = new EligibilityService();
       const actualEligibility = eligibilityService.isEligible(cart, criteria);
       should(actualEligibility).be.false();
+    });
+    it('should not be eligible with criteria (wrong shopperId)', () => {
+      const criteria = {
+        "shopperId": "ultimateshopper-id",
+        "totalAti": "99.80",
+        "products.productId": {
+          "in": ["3099873045369", "5449000054227"]
+        },
+        "products.quantity": {
+          "gte": 20,
+          "lt": 30
+        },
+        "date": {
+          "and": {
+            "gt": "2021-10-01T00:00:00.000Z",
+            "lt": "2021-12-31T23:59:59.000Z"
+          }
+        }
+      };
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.false();
+    });
+    it('should not be eligible with criteria (wrong totalAti)', () => {
+      const criteria = {
+        "shopperId": "shopper-id",
+        "totalAti": 100,
+        "products.productId": {
+          "in": ["3099873045369", "5449000054227"]
+        },
+        "products.quantity": {
+          "gte": 20,
+          "lt": 30
+        },
+        "date": {
+          "and": {
+            "gt": "2021-10-01T00:00:00.000Z",
+            "lt": "2021-12-31T23:59:59.000Z"
+          }
+        }
+      };
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.false();
+    });
+    it('should not be eligible with criteria (wrong products.productId)', () => {
+      const criteria = {
+        "shopperId": "shopper-id",
+        "totalAti": "99.80",
+        "products.productId": {
+          "in": ["6035479013471"]
+        },
+        "products.quantity": {
+          "gte": 20,
+          "lt": 30
+        },
+        "date": {
+          "and": {
+            "gt": "2021-10-01T00:00:00.000Z",
+            "lt": "2021-12-31T23:59:59.000Z"
+          }
+        }
+      };
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.false();
+    });
+    it('should not be eligible with criteria (wrong products.quantity)', () => {
+      const criteria = {
+        "shopperId": "shopper-id",
+        "totalAti": "99.80",
+        "products.productId": {
+          "in": ["3099873045369", "5449000054227"]
+        },
+        "products.quantity": {
+          "gt": 20,
+          "lt": 30
+        },
+        "date": {
+          "and": {
+            "gt": "2021-10-01T00:00:00.000Z",
+            "lt": "2021-12-31T23:59:59.000Z"
+          }
+        }
+      };
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.false();
+    });
+    it('should be eligible with criteria', () => {
+      const criteria = {
+        "shopperId": "shopper-id",
+        "totalAti": "99.80",
+        "products.productId": {
+          "in": ["3099873045369", "5449000054227"]
+        },
+        "products.quantity": {
+          "gte": 20,
+          "lt": 30
+        },
+        "date": {
+          "and": {
+            "gt": "2021-10-01T00:00:00.000Z",
+            "lt": "2021-12-31T23:59:59.000Z"
+          }
+        }
+      };
+      const eligibilityService = new EligibilityService();
+      const actualEligibility = eligibilityService.isEligible(cart, criteria);
+      should(actualEligibility).be.true();
     });
   });
 });
