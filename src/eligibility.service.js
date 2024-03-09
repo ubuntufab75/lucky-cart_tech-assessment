@@ -49,6 +49,17 @@ class EligibilityService {
   }
 
   /**
+   * Check Basic condition.
+   *
+   * @param criteriaValue
+   * @param cartFieldValue
+   * @return {boolean}
+   */
+  checkConditionBasic(criteriaValue, cartFieldValue) {
+    return cartFieldValue == criteriaValue;
+  }
+
+  /**
    * Check Sub-object condition.
    *
    * @param criteriaKey
@@ -56,6 +67,7 @@ class EligibilityService {
    * @return {boolean}
    */
   checkConditionSubobject(criteriaKey, criteriaValueOrObject, cart) {
+    const that = this;
     const [cartField, cartSubField] = criteriaKey.split('.');
     if (!cart[cartField]) {
       return false;
@@ -63,11 +75,10 @@ class EligibilityService {
     const cartFieldAsArray = Array.isArray(cart[cartField]) ? cart[cartField] : [cart[cartField]];
     if (!(criteriaValueOrObject instanceof Object)) {
       return cartFieldAsArray.some(function (cartFieldValue) {
-        return cartFieldValue[cartSubField] == criteriaValueOrObject;
+        return that.checkConditionBasic(criteriaValueOrObject, cartFieldValue[cartSubField]);
       });
     }
     const criteriaValueOrObjectEntries = Object.entries(criteriaValueOrObject);
-    const that = this;
     return criteriaValueOrObjectEntries.every(function ([condition, value]) {
       return cartFieldAsArray.some(function (cartFieldValue) {
         return that.checkConditionGtLtGteLteInAndOr(condition, value, cartFieldValue[cartSubField]);
@@ -98,7 +109,7 @@ class EligibilityService {
 
       // Basic condition
       if (!(criteriaValueOrObject instanceof Object)) {
-        return cart[criteriaKey] == criteriaValueOrObject;
+        return that.checkConditionBasic(criteriaValueOrObject, cart[criteriaKey]);
       }
 
       // Other conditions
