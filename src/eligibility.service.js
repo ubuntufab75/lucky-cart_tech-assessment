@@ -1,51 +1,41 @@
 class EligibilityService {
   /**
-     * Check conditions:
-     *  - gt
-     *  - lt
-     *  - gte
-     *  - lte
-     *  - in
-     *  - and
-     *  - or
+     * Check conditions except basic and sub-object.
      *
      * @param condition
      * @param value
      * @param cartFieldValue
      * @return {boolean}
      */
-  checkConditionGtLtGteLteInAndOr(condition, value, cartFieldValue) {
-    if (condition === 'gt') {
-      return cartFieldValue > value;
+  checkConditionExceptBasicSubobject(condition, value, cartFieldValue) {
+    switch (condition) {
+      case 'gt':
+        return cartFieldValue > value;
+      case 'lt':
+        return cartFieldValue < value;
+      case 'gte':
+        return cartFieldValue >= value;
+      case 'lte':
+        return cartFieldValue <= value;
+      case 'in':
+        return value.includes(cartFieldValue);
+      case 'and': {
+        const that = this;
+        const conditionValueEntries = Object.entries(value);
+        return conditionValueEntries.every(function ([subCondition, subValue]) {
+          return that.checkConditionExceptBasicSubobject(subCondition, subValue, cartFieldValue);
+        });
+      }
+      case 'or': {
+        const that = this;
+        const conditionValueEntries = Object.entries(value);
+        return conditionValueEntries.some(function ([subCondition, subValue]) {
+          return that.checkConditionExceptBasicSubobject(subCondition, subValue, cartFieldValue);
+        });
+      }
+      default:
+        return false;
     }
-    if (condition === 'lt') {
-      return cartFieldValue < value;
-    }
-    if (condition === 'gte') {
-      return cartFieldValue >= value;
-    }
-    if (condition === 'lte') {
-      return cartFieldValue <= value;
-    }
-    if (condition === 'in') {
-      return value.includes(cartFieldValue);
-    }
-    if (condition === 'and') {
-      const that = this;
-      const conditionValueEntries = Object.entries(value);
-      return conditionValueEntries.every(function ([subCondition, subValue]) {
-        return that.checkConditionGtLtGteLteInAndOr(subCondition, subValue, cartFieldValue);
-      });
-    }
-    if (condition === 'or') {
-      const that = this;
-      const conditionValueEntries = Object.entries(value);
-      return conditionValueEntries.some(function ([subCondition, subValue]) {
-        return that.checkConditionGtLtGteLteInAndOr(subCondition, subValue, cartFieldValue);
-      });
-    }
-
-    return false;
   }
 
   /**
@@ -81,7 +71,7 @@ class EligibilityService {
     const criteriaValueOrObjectEntries = Object.entries(criteriaValueOrObject);
     return criteriaValueOrObjectEntries.every(function ([condition, value]) {
       return cartFieldAsArray.some(function (cartFieldValue) {
-        return that.checkConditionGtLtGteLteInAndOr(condition, value, cartFieldValue[cartSubField]);
+        return that.checkConditionExceptBasicSubobject(condition, value, cartFieldValue[cartSubField]);
       });
     })
   }
@@ -115,7 +105,7 @@ class EligibilityService {
       // Other conditions
       const criteriaValueEntries = Object.entries(criteriaValueOrObject);
       return criteriaValueEntries.every(function ([condition, value]) {
-        return that.checkConditionGtLtGteLteInAndOr(condition, value, cart[criteriaKey]);
+        return that.checkConditionExceptBasicSubobject(condition, value, cart[criteriaKey]);
       });
     });
   }
